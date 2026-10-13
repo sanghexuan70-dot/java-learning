@@ -54,9 +54,9 @@ public class Main {
         String typeChoice = scanner.nextLine().trim();
 
         TransactionType type;
-        if (typeChoice.equals("1")) {
+        if ("1".equals(typeChoice)) {
             type = TransactionType.INCOME;
-        } else if (typeChoice.equals("2")) {
+        } else if ("2".equals(typeChoice)) {
             type = TransactionType.EXPENSE;
         } else {
             System.out.println("类型选择错误，添加失败！");
