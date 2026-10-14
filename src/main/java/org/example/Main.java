@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -24,6 +26,7 @@ public class Main {
             switch (choice) {
                 case "1" -> addBill();
                 case "2" -> listBills();
+                case "3" -> classifiedStatistic();
                 case "0" -> {
                     System.out.println("记账本已退出，再见！");
                     return; // 直接结束 main 方法
@@ -119,12 +122,25 @@ public class Main {
         System.out.println("添加成功！");
     }
 
+    private static void classifiedStatistic() throws IOException {
+        Map<BillCategory, BigDecimal> totals = repository.findAll().stream()
+                .filter(bill -> bill.type() == TransactionType.EXPENSE)   // 只统计支出
+                .collect(Collectors.groupingBy(
+                        Bill::category,                                    // 按什么分组（方法引用，验收点✓）
+                        Collectors.reducing(BigDecimal.ZERO, Bill::amount, BigDecimal::add)));
+        totals.forEach((category, sum) ->
+                System.out.println(category.getLabel() + " 支出合计：" + sum + " 元")
+        );
+
+    }
+
 
     // 显示菜单
     private static void printMenu() {
         System.out.println("========== 我的记账本 ==========");
         System.out.println("1. 添加账单");
         System.out.println("2. 查看账单");
+        System.out.println("3. 按分类统计列出每个分类的支出总额");
         System.out.println("0. 退出");
         System.out.println("================================");
     }
